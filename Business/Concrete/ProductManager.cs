@@ -2,6 +2,9 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
@@ -33,8 +36,9 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-        [SecuredOperation("product.add,admin")]
-        [ValidationAspect(typeof(ProductValidator))]
+        [SecuredOperation("product.add,admin")]  // Hangi Methoda Hangi Rolün erişimi var.
+        [ValidationAspect(typeof(ProductValidator))] // Eklenen Ürünün Validation kontrolü sağlanır.
+        [CacheRemoveAspect("IProductService.Get")]  // Ürün eklenir veya güncellenir ise cacheden silinir.
         public IResult Add(Product product)
         {
             IResult result = BusinessRules.Run(CheckIfProductNameExist(product.ProductName),
@@ -50,6 +54,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductAdded); // Messages classımızı standart mesajlar üretmemizi sağlar.
         }
 
+
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             return new SuccessDataResult<List<Product>>(_productDal.GetAll());
@@ -60,6 +66,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));   
         }
 
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(x => x.ProductId == productId));
@@ -81,6 +88,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult Update(Product product)
         {
             throw new NotImplementedException();
@@ -119,6 +127,23 @@ namespace Business.Concrete
             }
 
             return new SuccessResult();
+        }
+
+        [TransactionScopeAspect]
+        [PerformanceAspect(5)] // Performansı test eder eğer method 5 saniyeden fazla sürer ise uyarı gönderir.
+        public IResult AddTransactional(Product product) // Bir test işlemidir. Amaç iki veya daha fazla add() methodu çağırılacak ise ve
+                                                         // birincisi çalışırda ikincisinde hata verirse birinci add() methoduda geri alınır.
+                                                         // try catch yapısını Aspect ettik.
+        {
+            Add(product);
+
+            if(product.UnitPrice < 10)
+            {
+                throw new Exception("");
+            }
+            Add(product);
+
+            return null;
         }
     }
 }
