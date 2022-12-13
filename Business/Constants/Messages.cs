@@ -35,5 +35,8 @@ namespace Business.Constants
 
         public static string UserNotFound = "Kullanıcı bulunamadı";
 
+        public static string CategoryNameAlreadyExist = "Bu isimde kategori zaten var. ";
+
+        public static string CategoryAdded = "Kategori eklendi.";
     }
 }

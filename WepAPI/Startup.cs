@@ -41,6 +41,7 @@ namespace WepAPI
 
             services.AddControllers();
 
+            services.AddCors(); // FrontEnd Eriþimi için
             // Autofac -> IoC Container
 
 
@@ -85,6 +86,8 @@ namespace WepAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WepAPI v1"));
             }
+            app.ConfigureCustomExceptionMiddleware();
+            app.UseCors(builder =>builder.WithOrigins("http://localhost:4200").AllowAnyHeader() );  // Frontend eriþimi için
 
             app.UseHttpsRedirection();
 

@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Migrations;
 using Entities.Concrete;
@@ -32,6 +33,18 @@ namespace Business.Concrete
         public User GetByUsername(string username)
         {
             return _userDal.Get(u => u.UserName == username);
+        }
+
+        public DataResult<List<User>> GetAll()
+        {
+            return new SuccessDataResult<List<User>>(_userDal.GetAll());
+
+        }
+
+        public IDataResult<User> GetById(int userId)
+        {
+            return new SuccessDataResult<User>(_userDal.Get(x => x.UserId == userId));
+
         }
     }
 }

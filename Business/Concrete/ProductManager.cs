@@ -24,10 +24,10 @@ namespace Business.Concrete
 {
     public class ProductManager : IProductService
     {
+        // Eğer Nesne( Product -- liste şeklinde olabilir) döneceksen ErrorDataResult veya SuccessDataResult -- void ise SuccessResult veya ErrorResult ile dön.
         IProductDal _productDal;
 
         ICategoryService _categoryService;
-        // Eğer Nesne( Product -- liste şeklinde olabilir) döneceksen ErrorDataResult veya SuccessDataResult -- void ise SuccessResult veya ErrorResult ile dön.
 
         public ProductManager(IProductDal productDal, ICategoryService categoryService)
         {
@@ -36,7 +36,7 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-        [SecuredOperation("product.add,admin")]  // Hangi Methoda Hangi Rolün erişimi var.
+       //[SecuredOperation("product.add,admin")]  // Hangi Methoda Hangi Rolün erişimi var.
         [ValidationAspect(typeof(ProductValidator))] // Eklenen Ürünün Validation kontrolü sağlanır.
         [CacheRemoveAspect("IProductService.Get")]  // Ürün eklenir veya güncellenir ise cacheden silinir.
         public IResult Add(Product product)
