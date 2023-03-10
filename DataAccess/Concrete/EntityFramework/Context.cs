@@ -13,7 +13,7 @@ namespace DataAccess.Concrete.EntityFramework
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-HCOS156;Database=CORE_DB;Trusted_Connection=true");
+            optionsBuilder.UseSqlServer(@"Server=DESKTOP-C7OOESD;Database=CORE_DB;Trusted_Connection=true");
         }
 
         public DbSet<User> Users { get; set; }

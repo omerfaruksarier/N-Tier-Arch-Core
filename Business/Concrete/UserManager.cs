@@ -1,7 +1,6 @@
 ﻿using Business.Abstract;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using DataAccess.Migrations;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
